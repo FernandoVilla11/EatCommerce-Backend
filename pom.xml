@@ -8,11 +8,11 @@
 		<version>3.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ffcontrol</groupId>
-	<artifactId>fast-food-control</artifactId>
+	<groupId>com.eatcommerce</groupId>
+	<artifactId>eatcommerce-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>fast-food-control</name>
-	<description>SpringBoot project for FastFoodControl web service</description>
+	<name>eatcommerce-backend</name>
+	<description>SpringBoot project for EatCommerce web service</description>
 	<url/>
 	<licenses>
 		<license/>
