@@ -24,6 +24,13 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseService.createPurchase(request));
     }
 
+    @PutMapping("/edit-purchase")
+    public ResponseEntity<PurchaseDTO> editPurchase(
+            @RequestParam Long purchaseId,
+            @RequestBody PurchaseRequest request) {
+        return ResponseEntity.ok(purchaseService.editPurchase(purchaseId, request));
+    }
+
     @GetMapping("/get-all-purchases")
     public ResponseEntity<List<PurchaseDTO>> getAllPurchases() {
         return ResponseEntity.ok(purchaseService.getAllPurchases());

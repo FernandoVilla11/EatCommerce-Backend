@@ -34,7 +34,7 @@ public class PurchaseService {
 
         Purchase purchase = new Purchase();
         purchase.setSupplier(supplier);
-        purchase.setPurchaseDate(LocalDateTime.parse(request.getPurchaseDate()));;
+        purchase.setPurchaseDate(LocalDateTime.parse(request.getPurchaseDate()));
         purchase.setConcept(request.getConcept());
         purchase.setStatus("COMPLETED");
 
@@ -55,6 +55,37 @@ public class PurchaseService {
         purchase.setTotalPrice(totalAmount);
         purchase = purchaseRepository.save(purchase);
 
+        return convertToDTO(purchase);
+    }
+
+    public PurchaseDTO editPurchase(Long purchaseId, PurchaseRequest request) {
+        Purchase purchase = purchaseRepository.findById(purchaseId)
+                .orElseThrow(() -> new RuntimeException("Compra no encontrada"));
+
+        if (request.getConcept() != null && !request.getConcept().isEmpty()) {
+            purchase.setConcept(request.getConcept());
+        }
+        if (request.getPurchaseDate() != null && !request.getPurchaseDate().isEmpty()) {
+            purchase.setPurchaseDate(LocalDateTime.parse(request.getPurchaseDate()));
+        }
+
+        if (request.getItems() != null && !request.getItems().isEmpty()) {
+            purchase.getPurchaseProducts().clear();
+
+            double totalAmount = 0.0;
+            for (PurchaseProductDTO item : request.getItems()) {
+                PurchaseProduct purchaseProduct = new PurchaseProduct();
+                purchaseProduct.setPurchase(purchase);
+                purchaseProduct.setItemName(item.getItemName());
+                purchaseProduct.setQuantity(item.getQuantity());
+                purchaseProduct.setUnitPrice(item.getUnitPrice());
+                purchase.getPurchaseProducts().add(purchaseProduct);
+                totalAmount += item.getUnitPrice() * item.getQuantity();
+            }
+            purchase.setTotalPrice(totalAmount);
+        }
+
+        purchase = purchaseRepository.save(purchase);
         return convertToDTO(purchase);
     }
 
