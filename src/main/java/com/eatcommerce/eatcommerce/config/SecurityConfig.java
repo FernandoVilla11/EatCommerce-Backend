@@ -51,7 +51,9 @@ public class SecurityConfig {
                     .requestMatchers("/products/**").hasRole("ADMIN")
                     .requestMatchers("/users/**", 
                                     "/expenses/**", 
-                                    "/reports/**")
+                                    "/reports/**",
+                                    "/suppliers/**",
+                                    "/purchases/**")
                                     .hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )

@@ -11,9 +11,10 @@ import org.springframework.stereotype.Repository;
 
 import com.eatcommerce.eatcommerce.DTO.reportDTO.ProductSalesCompare;
 import com.eatcommerce.eatcommerce.entity.SaleProduct;
+import com.eatcommerce.eatcommerce.entity.SaleProductId;
 
 @Repository
-public interface SaleProductRepository extends JpaRepository<SaleProduct, Long> {
+public interface SaleProductRepository extends JpaRepository<SaleProduct, SaleProductId> {
     @Query(value = """
             SELECT 
                 p.product_id AS productId,
