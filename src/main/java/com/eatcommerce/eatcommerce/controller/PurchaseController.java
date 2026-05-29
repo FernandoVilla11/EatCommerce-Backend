@@ -3,9 +3,11 @@ package com.eatcommerce.eatcommerce.controller;
 import com.eatcommerce.eatcommerce.DTO.PurchaseDTO;
 import com.eatcommerce.eatcommerce.DTO.PurchaseReportDTO;
 import com.eatcommerce.eatcommerce.DTO.PurchaseRequest;
+import com.eatcommerce.eatcommerce.service.AuditService;
 import com.eatcommerce.eatcommerce.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,16 +21,31 @@ public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
 
+    @Autowired
+    private AuditService auditService;
+
     @PostMapping("/create-purchase")
-    public ResponseEntity<PurchaseDTO> createPurchase(@RequestBody PurchaseRequest request) {
-        return ResponseEntity.ok(purchaseService.createPurchase(request));
+    public ResponseEntity<PurchaseDTO> createPurchase(
+            @RequestBody PurchaseRequest request,
+            Authentication auth) {
+        PurchaseDTO created = purchaseService.createPurchase(request);
+        auditService.log(auth.getName(), "CREATE_PURCHASE", "Purchase",
+                String.valueOf(created.getId()),
+                "Registró compra a proveedor ID: " + created.getSupplierId() +
+                " por $" + created.getTotalAmount());
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/edit-purchase")
     public ResponseEntity<PurchaseDTO> editPurchase(
             @RequestParam Long purchaseId,
-            @RequestBody PurchaseRequest request) {
-        return ResponseEntity.ok(purchaseService.editPurchase(purchaseId, request));
+            @RequestBody PurchaseRequest request,
+            Authentication auth) {
+        PurchaseDTO updated = purchaseService.editPurchase(purchaseId, request);
+        auditService.log(auth.getName(), "UPDATE_PURCHASE", "Purchase",
+                String.valueOf(purchaseId),
+                "Editó compra ID: " + purchaseId);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/get-all-purchases")
@@ -54,7 +71,12 @@ public class PurchaseController {
     }
 
     @DeleteMapping("/delete-purchase")
-    public ResponseEntity<String> deletePurchase(@RequestParam Long purchaseId) {
+    public ResponseEntity<String> deletePurchase(
+            @RequestParam Long purchaseId,
+            Authentication auth) {
+        auditService.log(auth.getName(), "DELETE_PURCHASE", "Purchase",
+                String.valueOf(purchaseId),
+                "Eliminó compra ID: " + purchaseId);
         purchaseService.deletePurchase(purchaseId);
         return ResponseEntity.ok("Compra eliminada correctamente");
     }

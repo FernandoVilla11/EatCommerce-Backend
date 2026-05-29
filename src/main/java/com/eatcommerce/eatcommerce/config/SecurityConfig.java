@@ -35,29 +35,34 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
-                .csrf().disable()
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/uploads/**", 
-                                    "/products/get-all-products", 
-                                    "/products/get-product/**", 
-                                    "/auth/**")
-                                    .permitAll()
-                    .requestMatchers("/sales/**", 
-                                    "/users/get-user", 
-                                    "/users/me", 
-                                    "/products/get-products-for-sale-table", 
-                                    "/reports/top-products")
-                                    .hasAnyRole("ADMIN", "WORKER")
+                    .requestMatchers(
+                            "/uploads/**",
+                            "/products/get-all-products",
+                            "/products/get-product/**",
+                            "/auth/**")
+                            .permitAll()
+                    .requestMatchers(
+                            "/sales/**",
+                            "/users/get-user",
+                            "/users/me",
+                            "/products/get-products-for-sale-table",
+                            "/reports/top-products")
+                            .hasAnyRole("ADMIN", "WORKER")
                     .requestMatchers("/products/**").hasRole("ADMIN")
-                    .requestMatchers("/users/**", 
-                                    "/expenses/**", 
-                                    "/reports/**",
-                                    "/suppliers/**",
-                                    "/purchases/**")
-                                    .hasRole("ADMIN")
+                    .requestMatchers(
+                            "/users/**",
+                            "/expenses/**",
+                            "/reports/**",
+                            "/suppliers/**",
+                            "/purchases/**",
+                            "/audit/**")
+                            .hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

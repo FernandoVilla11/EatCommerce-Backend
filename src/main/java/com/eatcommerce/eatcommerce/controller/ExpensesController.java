@@ -6,32 +6,44 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import com.eatcommerce.eatcommerce.DTO.ExpenseDTO;
+import com.eatcommerce.eatcommerce.service.AuditService;
 import com.eatcommerce.eatcommerce.service.ExpensesService;
 
 @RestController
 @RequestMapping("/expenses")
 public class ExpensesController {
+
     @Autowired
     private ExpensesService expensesService;
 
+    @Autowired
+    private AuditService auditService;
+
     @PostMapping("/create-expense")
-    public ResponseEntity<ExpenseDTO> createExpense(@RequestBody ExpenseDTO request) {
-        return ResponseEntity.ok(expensesService.createExpense(request));
+    public ResponseEntity<ExpenseDTO> createExpense(
+            @RequestBody ExpenseDTO request,
+            Authentication auth) {
+        ExpenseDTO created = expensesService.createExpense(request);
+        auditService.log(auth.getName(), "CREATE_EXPENSE", "Expense",
+                String.valueOf(created.getExpenseId()),
+                "Creó gasto: " + created.getConcept() + " por $" + created.getTotalPrice());
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/edit-expense")
-    public ResponseEntity<ExpenseDTO> editExpense(@RequestParam Long expenseId, @RequestBody ExpenseDTO request) {
-        return ResponseEntity.ok(expensesService.editExpense(expenseId, request));
+    public ResponseEntity<ExpenseDTO> editExpense(
+            @RequestParam Long expenseId,
+            @RequestBody ExpenseDTO request,
+            Authentication auth) {
+        ExpenseDTO updated = expensesService.editExpense(expenseId, request);
+        auditService.log(auth.getName(), "UPDATE_EXPENSE", "Expense",
+                String.valueOf(expenseId),
+                "Editó gasto: " + updated.getConcept() + " por $" + updated.getTotalPrice());
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/get-all-expenses")
@@ -40,12 +52,17 @@ public class ExpensesController {
     }
 
     @GetMapping("/get-expense-by-id")
-    public ResponseEntity<ExpenseDTO> getExpenseById(@RequestParam Long expenseId) { 
+    public ResponseEntity<ExpenseDTO> getExpenseById(@RequestParam Long expenseId) {
         return ResponseEntity.ok(expensesService.getExpenseById(expenseId));
     }
 
     @DeleteMapping("/delete-expense")
-    public ResponseEntity<String> deleteExpense(@RequestParam Long expenseId) {
+    public ResponseEntity<String> deleteExpense(
+            @RequestParam Long expenseId,
+            Authentication auth) {
+        auditService.log(auth.getName(), "DELETE_EXPENSE", "Expense",
+                String.valueOf(expenseId),
+                "Eliminó gasto ID: " + expenseId);
         expensesService.deleteExpense(expenseId);
         return ResponseEntity.ok("Expense deleted successfully");
     }
@@ -56,8 +73,9 @@ public class ExpensesController {
     }
 
     @GetMapping("/get-expenses-by-date-range")
-    public ResponseEntity<List<ExpenseDTO>> getExpensesByDateRange(@RequestParam LocalDateTime startDate, 
-                                                                    @RequestParam LocalDateTime endDate) {
+    public ResponseEntity<List<ExpenseDTO>> getExpensesByDateRange(
+            @RequestParam LocalDateTime startDate,
+            @RequestParam LocalDateTime endDate) {
         return ResponseEntity.ok(expensesService.getExpensesByDateRange(startDate, endDate));
     }
 }

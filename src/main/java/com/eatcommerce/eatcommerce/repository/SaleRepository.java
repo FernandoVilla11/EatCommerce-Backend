@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.eatcommerce.eatcommerce.DTO.reportDTO.MonthlySales;
-import com.eatcommerce.eatcommerce.DTO.reportDTO.SalesSummary;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.SalesSummaryProjection;
 import com.eatcommerce.eatcommerce.entity.Sale;
 

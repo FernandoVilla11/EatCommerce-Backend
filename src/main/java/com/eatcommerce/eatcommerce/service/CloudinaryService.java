@@ -12,14 +12,17 @@ import com.cloudinary.utils.ObjectUtils;
 
 @Service
 public class CloudinaryService {
+
     @Autowired
     private Cloudinary cloudinary;
 
-    public Map uploadFile(MultipartFile file) throws IOException {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> uploadFile(MultipartFile file) throws IOException {
         return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 
-    public Map deleteFile(String publicId) throws IOException {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> deleteFile(String publicId) throws IOException {
         return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
 }

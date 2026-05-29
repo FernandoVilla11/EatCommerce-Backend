@@ -5,7 +5,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.eatcommerce.eatcommerce.DTO.ProductDTO;
 import com.eatcommerce.eatcommerce.DTO.ProductQuantity;
 import com.eatcommerce.eatcommerce.DTO.SaleDTO;
 import com.eatcommerce.eatcommerce.entity.Sale;

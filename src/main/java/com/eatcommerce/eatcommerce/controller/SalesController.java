@@ -6,27 +6,33 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import com.eatcommerce.eatcommerce.DTO.SaleDTO;
 import com.eatcommerce.eatcommerce.DTO.SaleRequest;
+import com.eatcommerce.eatcommerce.service.AuditService;
 import com.eatcommerce.eatcommerce.service.SalesService;
 
 @RestController
 @RequestMapping("/sales")
 public class SalesController {
+
     @Autowired
     private SalesService salesService;
 
+    @Autowired
+    private AuditService auditService;
+
     @PostMapping("/register-sale")
-    public ResponseEntity<SaleDTO> registerSale(@RequestBody SaleRequest request) {
-        return ResponseEntity.ok(salesService.registerSale(request));
+    public ResponseEntity<SaleDTO> registerSale(
+            @RequestBody SaleRequest request,
+            Authentication auth) {
+        SaleDTO created = salesService.registerSale(request);
+        auditService.log(auth.getName(), "CREATE_SALE", "Sale",
+                String.valueOf(created.getSaleId()),
+                "Registró venta por $" + created.getTotalPrice());
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/get-sale")
@@ -45,13 +51,19 @@ public class SalesController {
     }
 
     @GetMapping("/get-sales-by-date-range")
-    public ResponseEntity<List<SaleDTO>> getSalesByDateRange(@RequestParam LocalDateTime startDate, 
-                                                            @RequestParam LocalDateTime endDate) {
+    public ResponseEntity<List<SaleDTO>> getSalesByDateRange(
+            @RequestParam LocalDateTime startDate,
+            @RequestParam LocalDateTime endDate) {
         return ResponseEntity.ok(salesService.getSalesByDateRange(startDate, endDate));
     }
 
     @DeleteMapping("/delete-sale")
-    public ResponseEntity<String> deleteSale(@RequestParam Long saleId) {
+    public ResponseEntity<String> deleteSale(
+            @RequestParam Long saleId,
+            Authentication auth) {
+        auditService.log(auth.getName(), "DELETE_SALE", "Sale",
+                String.valueOf(saleId),
+                "Eliminó venta ID: " + saleId);
         salesService.deleteSale(saleId);
         return ResponseEntity.ok("Sale deleted successfully");
     }

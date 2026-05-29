@@ -1,7 +1,6 @@
 package com.eatcommerce.eatcommerce.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ import com.eatcommerce.eatcommerce.DTO.reportDTO.MonthlySales;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.ProductSalesCompare;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.ProductSalesCompareResponse;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.SalesCompare;
-import com.eatcommerce.eatcommerce.DTO.reportDTO.SalesSummary;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.SalesSummaryProjection;
 import com.eatcommerce.eatcommerce.DTO.reportDTO.TopProduct;
 import com.eatcommerce.eatcommerce.repository.SaleProductRepository;

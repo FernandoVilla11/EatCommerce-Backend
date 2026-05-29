@@ -13,7 +13,6 @@ import com.eatcommerce.eatcommerce.entity.User;
 import com.eatcommerce.eatcommerce.repository.UserRepository;
 import com.eatcommerce.eatcommerce.util.JwtUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class UserService {
